@@ -35,7 +35,7 @@ class _VideoPageState extends State<VideoPage> {
   bool playVideo = true; //trueにすることによって再生ボタンのままになる⏸️
   bool isMuted = false; //これもそうtrueにするとミュートマークになる🔇
   bool isRepeating = false; //これもそうw trueにするとリピートマークが最初から色がついている
-  double _val = 0.5;
+  double _val = 0.0;
   Timer? timer;
 
   @override

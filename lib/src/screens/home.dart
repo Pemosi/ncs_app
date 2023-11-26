@@ -42,46 +42,46 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Widget buildRecommendedVideos(List<dynamic> videos) {
-    return ListView.builder(
-      physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: videos.length,
-      itemBuilder: (BuildContext context, int index) {
-        final video = videos[index];
-        final String videoId = video['id']['videoId'];
-        final String title = video['snippet']['title'];
-        final String thumbnailUrl = video['snippet']['thumbnails']['medium']['url'];
-        final String backVideoId = index > 0 ? videos[index - 1]['id']['videoId'] ?? '' : ''; //現在のビデオがリストの先頭ではない場合
-        final String forward = index < videos.length - 1 ? videos[index + 1]['id']['videoId']?? '' : ''; //現在のビデオがリストの最後ではない
-        final bool isFirstVideo = index == 0; // 現在のビデオがリストの先頭かどうかを判定
-        final bool isLastVideo = index == videos.length - 1; // 現在のビデオがリストの最後かどうかを判定
-        final String previousVideoId = isFirstVideo ? '' : videos[index - 1]['id']['videoId'] ?? '';//現在のビデオリストが先頭じゃなかったら前のIDを取ってきている
-        final String nextVideoId = isLastVideo ? '' : videos[index + 1]['id']['videoId'] ?? '';//現在のビデオがリストの最後じゃなかったら次のIDを取ってきている
+  // Widget buildRecommendedVideos(List<dynamic> videos) {
+  //   return ListView.builder(
+  //     physics: const AlwaysScrollableScrollPhysics(),
+  //     itemCount: videos.length,
+  //     itemBuilder: (BuildContext context, int index) {
+  //       final video = videos[index];
+  //       final String videoId = video['id']['videoId'];
+  //       final String title = video['snippet']['title'];
+  //       final String thumbnailUrl = video['snippet']['thumbnails']['medium']['url'];
+  //       final String backVideoId = index > 0 ? videos[index - 1]['id']['videoId'] ?? '' : ''; //現在のビデオがリストの先頭ではない場合
+  //       final String forward = index < videos.length - 1 ? videos[index + 1]['id']['videoId']?? '' : ''; //現在のビデオがリストの最後ではない
+  //       final bool isFirstVideo = index == 0; // 現在のビデオがリストの先頭かどうかを判定
+  //       final bool isLastVideo = index == videos.length - 1; // 現在のビデオがリストの最後かどうかを判定
+  //       final String previousVideoId = isFirstVideo ? '' : videos[index - 1]['id']['videoId'] ?? '';//現在のビデオリストが先頭じゃなかったら前のIDを取ってきている
+  //       final String nextVideoId = isLastVideo ? '' : videos[index + 1]['id']['videoId'] ?? '';//現在のビデオがリストの最後じゃなかったら次のIDを取ってきている
 
 
 
-        return ListTile(
-          leading: Image.network(thumbnailUrl),
-          title: Text(title),
-          onTap: () {
-            context.router.push(
-              VideoRoute(
-                videoId: videoId,
-                backVideoId: backVideoId,
-                forward: forward,
-                nextVideoId: nextVideoId,
-                previousVideoId: previousVideoId,
-                videos: videos, 
-                thumbnailUrl: thumbnailUrl, 
-                title: title,
-                playlistName: '',
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
+  //       return ListTile(
+  //         leading: Image.network(thumbnailUrl),
+  //         title: Text(title),
+  //         onTap: () {
+  //           context.router.push(
+  //             VideoRoute(
+  //               videoId: videoId,
+  //               backVideoId: backVideoId,
+  //               forward: forward,
+  //               nextVideoId: nextVideoId,
+  //               previousVideoId: previousVideoId,
+  //               videos: videos, 
+  //               thumbnailUrl: thumbnailUrl, 
+  //               title: title,
+  //               playlistName: '',
+  //             ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {

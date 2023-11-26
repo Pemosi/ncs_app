@@ -41,16 +41,7 @@ class RootPage extends StatelessWidget {
                 label: 'ライブラリ',
               ),
             ],
-            onDestinationSelected: (index) {
-              // タブが再度選択された場合
-              if (index == tabsRouter.activeIndex) {
-                // 一つ前の画面に戻る処理を実行
-                tabsRouter.pop();
-              } else {
-                // 通常のタブ切り替え処理
-                tabsRouter.setActiveIndex(index);
-              }
-            },
+            onDestinationSelected: tabsRouter.setActiveIndex,
           ),
         );
       },
