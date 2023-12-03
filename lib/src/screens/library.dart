@@ -244,7 +244,7 @@ class _LibraryPageState extends State<LibraryPage> {
           );
         },
         icon: const Icon(Icons.add),
-        label: const Text('New Playlist'),
+        label: const Text('プレイリストを作成'),
       ),
     );
   }
