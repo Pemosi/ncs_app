@@ -17,10 +17,10 @@ class _SearchPageState extends State<SearchPage> {
   List<dynamic> searchResults = [];
 
   Future<List<dynamic>> searchVideos(String query, String channelId) async {
-    const String apiKey = 'AIzaSyCFMsc8U6804ORH2NO8HvGGgikpwvgZqLE'; // ご自身のYouTube APIキーに置き換えてください
-    final String apiUrl = 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=10&key=$apiKey&channelId=$channelId&q=';
+    const String apiKey = 'AIzaSyCFMsc8U6804ORH2NO8HvGGgikpwvgZqLE'; // YouTubeのAPIを取得
+    final String apiUrl = 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=10&key=$apiKey&channelId=$channelId&q='; //チャンネルIDの人の動画データを取得
 
-    final response = await http.get(Uri.parse('$apiUrl$query'));
+    final response = await http.get(Uri.parse('$apiUrl$query')); //テキストフィールドの文字列と一致する動画のデータを取得
 
     if (response.statusCode == 200) {
       Map<String, dynamic> data = json.decode(response.body);

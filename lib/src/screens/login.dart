@@ -23,26 +23,31 @@ class _LoginPageState extends State<LoginPage> {
   final FocusNode _passwordNameFocusNode = FocusNode();
   var _errorMessage = "";
 
-  // FlutterFireの公式ドキュメントのコードをそのまま使う!
-  Future<UserCredential> signInWithGoogle() async {
-    // 認証フローを起動する
+   Future<UserCredential> signInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-    // Obtain the auth details from the request
     final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
 
-    // 新しいクレデンシャルを作成する
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-    print(credential);
-    // NextPageへ画面遷移するコード
-    // ignore: use_build_context_synchronously
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const HomePage()));
-    // サインインしたら、UserCredential を返す。
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+    if (googleAuth != null && (googleAuth.accessToken != null || googleAuth.idToken != null)) {
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      print(credential);
+
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+
+      return await FirebaseAuth.instance.signInWithCredential(credential);
+    } else {
+      print("Googleサインインできませんでした。");
+      // エラー処理またはメッセージの表示
+      throw Exception("Googleサインインできませんでした。");
+    }
   }
 
   @override

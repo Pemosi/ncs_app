@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ncs_app/app_router.dart';
 import 'package:http/http.dart' as http;
@@ -20,11 +21,13 @@ class HomeRouterPage extends AutoRouter {
 class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late Future<List<dynamic>> recommendedVideosFuture;
+  late User? _user; // ログインユーザー情報
 
   @override
   void initState() {
     super.initState();
     recommendedVideosFuture = fetchRecommendedVideos();
+    _user = FirebaseAuth.instance.currentUser; // 初期化時にログインユーザー情報を取得
   }
 
   Future<List<dynamic>> fetchRecommendedVideos() async {
@@ -39,6 +42,19 @@ class _HomePageState extends State<HomePage> {
       return data['items'];
     } else {
       throw Exception('Failed to fetch recommended videos');
+    }
+  }
+
+  void _handleLoginLogout() async {
+    if (_user == null) {
+      // ログインしていない場合はログインページに遷移
+      await AutoRouter.of(context).push(const LoginRoute());
+    } else {
+      // ログアウト処理
+      await FirebaseAuth.instance.signOut();
+      setState(() {
+        _user = null;
+      });
     }
   }
 
@@ -88,15 +104,36 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       key: _scaffoldKey,
       drawer: Drawer(
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(vertical: 100.0),
-          leading: const Icon(Icons.login),
-          title: const Text("Login"),
-          onTap:() {
-            Navigator.of(context).pop();
-            AutoRouter.of(context).push(const LoginRoute());
-            print("できてるねぇー");
-          },
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            UserAccountsDrawerHeader(
+              accountName: _user != null ? Text(_user!.displayName ?? '') : null,
+              accountEmail: _user != null ? Text(_user!.email ?? '') : null,
+              currentAccountPicture: _user != null? CircleAvatar(
+                backgroundImage: NetworkImage(_user!.photoURL ?? ''),
+              ) : null,
+            ),
+            ListTile(
+              leading: const Icon(Icons.login),
+              title: Text(_user != null ? "ログアウト" : "ログイン"), // ログイン状態によってボタンの表示を変更
+              onTap: _handleLoginLogout,
+            ),
+            // ListTile(
+            //   leading: const Icon(Icons.home),
+            //   title: const Text("Home"),
+            //   onTap: () {
+            //     // Handle home tap
+            //   },
+            // ),
+            // ListTile(
+            //   leading: const Icon(Icons.settings),
+            //   title: const Text("Settings"),
+            //   onTap: () {
+            //     // Handle settings tap
+            //   },
+            // ),
+          ],
         ),
       ),
       appBar: AppBar(
