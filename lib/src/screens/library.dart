@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ncs_app/app_router.dart';
 import 'package:ncs_app/src/screens/details_page.dart';
 
 @RoutePage()
@@ -27,6 +29,7 @@ class LibraryPage extends StatefulWidget {
 // }
 
 class _LibraryPageState extends State<LibraryPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _playlistController = TextEditingController();
 
   void _createPlaylist(String playlistName) { //ライブラリ作成
@@ -159,89 +162,146 @@ class _LibraryPageState extends State<LibraryPage> {
         ),
         backgroundColor: Colors.deepPurple,
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('playlistNames').orderBy('timestamp', descending: true).snapshots(),
+      body: StreamBuilder<User?>(
+        stream: _auth.authStateChanges(),
         builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return const Center(child: Text('データの取得中にエラーが発生しました'));
-          }
+          if (snapshot.connectionState == ConnectionState.active) {
+            User? user = snapshot.data;
 
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          final playlists = snapshot.data!.docs;
-
-          return ListView.builder(
-            itemCount: playlists.length,
-            itemBuilder: (context, index) {
-              final playlist = playlists[index].data() as Map<String, dynamic>;
-              final playlistName = playlist['name'];
-              final playlistId = playlists[index].id;
-
-              return Card(
-                child: ListTile(
-                  title: Text(playlistName),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit), // ライブラリ名を変更するためのアイコン
-                        onPressed: () {
-                          _editPlaylistName(playlistId, playlistName);
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () {
-                          _deletePlaylist(playlistId);
-                        },
-                      ),
-                    ],
-                  ),
-                  onTap: () {
-                    _showPlaylistDetails(playlistId, playlistName);
-                  },
+            if (user == null) {
+              // ログインしていない場合の表示
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('ログインしてください'),
+                    ElevatedButton(
+                      onPressed: () {
+                        // ログイン画面に遷移
+                        AutoRouter.of(context).push(const LoginRoute());
+                      },
+                      child: const Text('ログイン'),
+                    ),
+                  ],
                 ),
               );
-            },
-          );
+            }
+
+            // ログイン済みの場合の表示
+            return StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance.collection('playlistNames').orderBy('timestamp', descending: true).snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Center(child: Text('データの取得中にエラーが発生しました'));
+                }
+
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                final playlists = snapshot.data!.docs;
+
+                return ListView.builder(
+                  itemCount: playlists.length,
+                  itemBuilder: (context, index) {
+                    final playlist = playlists[index].data() as Map<String, dynamic>;
+                    final playlistName = playlist['name'];
+                    final playlistId = playlists[index].id;
+
+                    return Card(
+                      child: ListTile(
+                        title: Text(playlistName),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit),
+                              onPressed: () {
+                                _editPlaylistName(playlistId, playlistName);
+                              },
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () {
+                                _deletePlaylist(playlistId);
+                              },
+                            ),
+                          ],
+                        ),
+                        onTap: () {
+                          _showPlaylistDetails(playlistId, playlistName);
+                        },
+                      ),
+                    );
+                  },
+                );
+              },
+            );
+          } else {
+            // データ取得中の場合はローディング表示
+            return const Center(child: CircularProgressIndicator());
+          }
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: const Text('プレイリストを新しく作る'),
-                content: TextField(
-                  controller: _playlistController,
-                  decoration: const InputDecoration(
-                    labelText: 'プレイリスト名',
-                  ),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('キャンセル'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      final playlistName = _playlistController.text.trim();
-                      if (playlistName.isNotEmpty) {
-                        _createPlaylist(playlistName);
+        onPressed: () async {
+          // ログインしているか確認
+          User? user = FirebaseAuth.instance.currentUser;
+
+          if (user == null) {
+            // ログインしていない場合の処理
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('ログインが必要です'),
+                  content: const Text('プレイリストを作成するにはログインが必要です。'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
                         Navigator.of(context).pop();
-                      }
-                    },
-                    child: const Text('作成'),
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
+                );
+              },
+            );
+          } else {
+            // ログインしている場合の処理
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('プレイリストを新しく作る'),
+                  content: TextField(
+                    controller: _playlistController,
+                    decoration: const InputDecoration(
+                      labelText: 'プレイリスト名',
+                    ),
                   ),
-                ],
-              );
-            },
-          );
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('キャンセル'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        final playlistName = _playlistController.text.trim();
+                        if (playlistName.isNotEmpty) {
+                          _createPlaylist(playlistName);
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      child: const Text('作成'),
+                    ),
+                  ],
+                );
+              },
+            );
+          }
         },
         icon: const Icon(Icons.add),
         label: const Text('プレイリストを作成'),
