@@ -1,12 +1,9 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ncs_app/src/screens/play_from_library.dart';
 
-// @RoutePage()
-// class DetailsRouterPage extends AutoRouter {
-//   const DetailsRouterPage({super.key});
-// }
-
+@RoutePage()
 class DetailsPage extends StatelessWidget {
   final String playlistName;
   final String playlistId;

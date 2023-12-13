@@ -2,8 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ncs_app/app_router.dart';
 import 'package:ncs_app/src/screens/details_page.dart';
+import 'package:ncs_app/src/screens/login.dart';
 
 @RoutePage()
 class LibraryPage extends StatefulWidget {
@@ -23,10 +23,10 @@ class LibraryPage extends StatefulWidget {
   _LibraryPageState createState() => _LibraryPageState();
 }
 
-// @RoutePage()
-// class LibraryRouterPage extends AutoRouter {
-//   const LibraryRouterPage({super.key});
-// }
+@RoutePage()
+class LibraryRouterPage extends AutoRouter {
+  const LibraryRouterPage({super.key});
+}
 
 class _LibraryPageState extends State<LibraryPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -178,7 +178,10 @@ class _LibraryPageState extends State<LibraryPage> {
                     ElevatedButton(
                       onPressed: () {
                         // ログイン画面に遷移
-                        AutoRouter.of(context).push(const LoginRoute());
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const LoginPage()),
+                        );
                       },
                       child: const Text('ログイン'),
                     ),

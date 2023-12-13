@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:ncs_app/root_page.dart';
+import 'package:ncs_app/src/screens/details_page.dart';
 // import 'package:ncs_app/src/screens/details_page.dart';
 import 'package:ncs_app/src/screens/home.dart';
 import 'package:ncs_app/src/screens/library.dart';
@@ -76,6 +77,12 @@ class AppRouter extends _$AppRouter {
         AutoRoute(
           path: 'library',
           page: LibraryRoute.page,
+          children: [
+            
+            AutoRoute(
+              page: DetailsRoute.page,
+            ),
+          ],
         ),
       ],
     ),

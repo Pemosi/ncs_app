@@ -15,6 +15,17 @@ abstract class _$AppRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
+    DetailsRoute.name: (routeData) {
+      final args = routeData.argsAs<DetailsRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: DetailsPage(
+          key: args.key,
+          playlistName: args.playlistName,
+          playlistId: args.playlistId,
+        ),
+      );
+    },
     HomeRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -56,6 +67,12 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    LibraryRouterRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const LibraryRouterPage(),
+      );
+    },
     LoginRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -93,6 +110,49 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
   };
+}
+
+/// generated route for
+/// [DetailsPage]
+class DetailsRoute extends PageRouteInfo<DetailsRouteArgs> {
+  DetailsRoute({
+    Key? key,
+    required String playlistName,
+    required String playlistId,
+    List<PageRouteInfo>? children,
+  }) : super(
+          DetailsRoute.name,
+          args: DetailsRouteArgs(
+            key: key,
+            playlistName: playlistName,
+            playlistId: playlistId,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'DetailsRoute';
+
+  static const PageInfo<DetailsRouteArgs> page =
+      PageInfo<DetailsRouteArgs>(name);
+}
+
+class DetailsRouteArgs {
+  const DetailsRouteArgs({
+    this.key,
+    required this.playlistName,
+    required this.playlistId,
+  });
+
+  final Key? key;
+
+  final String playlistName;
+
+  final String playlistId;
+
+  @override
+  String toString() {
+    return 'DetailsRouteArgs{key: $key, playlistName: $playlistName, playlistId: $playlistId}';
+  }
 }
 
 /// generated route for
@@ -222,6 +282,20 @@ class LibraryRouteArgs {
   String toString() {
     return 'LibraryRouteArgs{key: $key, videoId: $videoId, videos: $videos, title: $title, thumbnailUrl: $thumbnailUrl, forward: $forward, backVideoId: $backVideoId, previousVideoId: $previousVideoId, nextVideoId: $nextVideoId}';
   }
+}
+
+/// generated route for
+/// [LibraryRouterPage]
+class LibraryRouterRoute extends PageRouteInfo<void> {
+  const LibraryRouterRoute({List<PageRouteInfo>? children})
+      : super(
+          LibraryRouterRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'LibraryRouterRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for
