@@ -249,7 +249,7 @@ class _LibraryVideoPageState extends State<LibraryVideoPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const Padding(padding: EdgeInsets.all(10)),
+                  const Padding(padding: EdgeInsets.all(5)),
                   Text(
                     "Title: ${_videoMetaData.title}",
                     style: const TextStyle(
@@ -258,20 +258,20 @@ class _LibraryVideoPageState extends State<LibraryVideoPage> {
                     ),
                   ),
                   const Padding(padding: EdgeInsets.all(5)),
-                  Text(
-                    "Video ID: ${_videoMetaData.videoId}",
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Padding(padding: EdgeInsets.all(5)),
+                  // Text(
+                  //   "Video ID: ${_videoMetaData.videoId}",
+                  //   style: const TextStyle(
+                  //     fontSize: 18,
+                  //     fontWeight: FontWeight.bold,
+                  //   ),
+                  // ),
+                  // const Padding(padding: EdgeInsets.all(5)),
                 ],
               ),
               Center(
                 child: Column(
                   children: [
-                    const Padding(padding: EdgeInsets.all(15)),
+                    const Padding(padding: EdgeInsets.all(10)),
                     const Text(
                       "Volume:",
                       style: TextStyle(

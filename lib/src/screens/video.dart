@@ -301,19 +301,19 @@ class _VideoPageState extends State<VideoPage> {
               Text(
                 "Title: ${_videoMetaData.title}",
                 style: const TextStyle(
-                  fontSize: 17,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const Padding(padding: EdgeInsets.all(5)),
-              Text(
-                "Video ID: ${_videoMetaData.videoId}",
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              const Padding(padding: EdgeInsets.all(10)),
+              // Text(
+              //   "Video ID: ${_videoMetaData.videoId}",
+              //     style: const TextStyle(
+              //       fontSize: 17,
+              //       fontWeight: FontWeight.bold,
+              //     ),
+              //   ),
+              // const Padding(padding: EdgeInsets.all(10)),
             ],
           ),
           Center(

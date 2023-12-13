@@ -2,7 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ncs_app/src/screens/details_page.dart';
+import 'package:ncs_app/app_router.dart';
+// import 'package:ncs_app/src/screens/details_page.dart';
 import 'package:ncs_app/src/screens/login.dart';
 
 @RoutePage()
@@ -65,12 +66,10 @@ class _LibraryPageState extends State<LibraryPage> {
   }
 
   void _showPlaylistDetails(String playlistId, String playlistName) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => DetailsPage(
-          playlistName: playlistName,
-          playlistId: playlistId,
-        ),
+    context.router.push(
+      DetailsRoute(
+        playlistName: playlistName,
+        playlistId: playlistId,
       ),
     );
   }

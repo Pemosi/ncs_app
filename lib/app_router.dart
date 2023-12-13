@@ -76,10 +76,14 @@ class AppRouter extends _$AppRouter {
         
         AutoRoute(
           path: 'library',
-          page: LibraryRoute.page,
+          page: LibraryRouterRoute.page,
           children: [
-            
             AutoRoute(
+              path: 'library',
+              page: LibraryRoute.page,
+            ),
+            AutoRoute(
+              path: 'details',
               page: DetailsRoute.page,
             ),
           ],
