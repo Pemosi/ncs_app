@@ -71,7 +71,21 @@ class AppRouter extends _$AppRouter {
 
         AutoRoute(
           path: 'search',
-          page: SearchRoute.page,
+          page: SearchRouterRoute.page,
+          children: [
+            AutoRoute(
+              path: 'search',
+              page: SearchRoute.page
+            ),
+            AutoRoute(
+              path: 'video',
+              page: VideoRoute.page,
+            ),
+            AutoRoute(
+              path: 'login',
+              page: LoginRoute.page,
+            ),
+          ],
         ),
         
         AutoRoute(

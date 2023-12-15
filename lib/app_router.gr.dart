@@ -91,6 +91,12 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const SearchPage(),
       );
     },
+    SearchRouterRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const SearchRouterPage(),
+      );
+    },
     VideoRoute.name: (routeData) {
       final args = routeData.argsAs<VideoRouteArgs>();
       return AutoRoutePage<dynamic>(
@@ -336,6 +342,20 @@ class SearchRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'SearchRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [SearchRouterPage]
+class SearchRouterRoute extends PageRouteInfo<void> {
+  const SearchRouterRoute({List<PageRouteInfo>? children})
+      : super(
+          SearchRouterRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'SearchRouterRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

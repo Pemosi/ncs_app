@@ -12,6 +12,11 @@ class SearchPage extends StatefulWidget {
   State<SearchPage> createState() => _SearchPageState();
 }
 
+@RoutePage()
+class SearchRouterPage extends AutoRouter {
+  const SearchRouterPage({super.key});
+}
+
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchController = TextEditingController();
   List<dynamic> searchResults = [];
