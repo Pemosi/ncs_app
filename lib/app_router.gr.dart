@@ -56,14 +56,6 @@ abstract class _$AppRouter extends RootStackRouter {
         routeData: routeData,
         child: LibraryPage(
           key: args.key,
-          videoId: args.videoId,
-          videos: args.videos,
-          title: args.title,
-          thumbnailUrl: args.thumbnailUrl,
-          forward: args.forward,
-          backVideoId: args.backVideoId,
-          previousVideoId: args.previousVideoId,
-          nextVideoId: args.nextVideoId,
         ),
       );
     },

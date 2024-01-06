@@ -8,16 +8,7 @@ import 'package:ncs_app/src/screens/login.dart';
 
 @RoutePage()
 class LibraryPage extends StatefulWidget {
-  final String videoId;
-  final String forward;
-  final String backVideoId;
-  final String previousVideoId;
-  final String nextVideoId;
-  final List<dynamic> videos;
-  final String title;
-  final String thumbnailUrl;
-
-  const LibraryPage({Key? key, required this.videoId, required this.videos, required this.title, required this.thumbnailUrl, required this.forward, required this.backVideoId, required this.previousVideoId, required this.nextVideoId}) : super(key: key);
+  const LibraryPage({Key? key}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api

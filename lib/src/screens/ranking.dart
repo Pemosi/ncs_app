@@ -142,7 +142,7 @@ class _LankingState extends State<LankingPage> {
         backgroundColor: Colors.deepPurple,
         leading: IconButton(
           icon: const Icon(
-            Icons.settings,
+            Icons.account_circle,
             color: Colors.white,
           ),
           onPressed: () {

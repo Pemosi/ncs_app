@@ -60,16 +60,6 @@ class AppRouter extends _$AppRouter {
         ),
 
         AutoRoute(
-          page: LoginRoute.page, //HomeRouterRouteのchildrenに入っているからログインの画面にボトムナビゲーションバーが表示されているつまりHomeRoute.pageの画面にログインページが上に重なっていると想定
-          children: [
-            AutoRoute(
-              path: 'home',
-              page: HomeRoute.page,
-            ),
-          ],
-        ),
-
-        AutoRoute(
           path: 'search',
           page: SearchRouterRoute.page,
           children: [

@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.deepPurple,
         leading: IconButton(
           icon: const Icon(
-            Icons.settings,
+            Icons.account_circle,
             color: Colors.white,
           ),
           onPressed: () {
