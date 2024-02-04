@@ -41,7 +41,16 @@ class RootPage extends StatelessWidget {
                 label: 'ライブラリ',
               ),
             ],
-            onDestinationSelected: tabsRouter.setActiveIndex,
+            onDestinationSelected: (index) {
+              // 同じアイコンが再選択された場合、ホームに戻る
+              if (tabsRouter.activeIndex == index) {
+                context.router.popUntilRoot();
+                print("動作はしてる");
+              } else {
+                tabsRouter.setActiveIndex(index);
+                print("正常になっている");
+              }
+            },
           ),
         );
       },
