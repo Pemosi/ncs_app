@@ -12,7 +12,7 @@ class LankingRouterPage extends AutoRouter {
 
 @RoutePage()
 class LankingPage extends StatefulWidget {
-  const LankingPage({Key? key}) : super(key: key);
+  const LankingPage({super.key});
 
   @override
   State<LankingPage> createState() => _LankingState();
@@ -21,13 +21,17 @@ class LankingPage extends StatefulWidget {
 class _LankingState extends State<LankingPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late Future<List<dynamic>> rankingVideosFuture;
-  late User? _user; // ログインユーザー情報
+  User? _user; // ログインユーザー情報
 
   @override
   void initState() {
     super.initState();
     rankingVideosFuture = fetchRankingVideos();
-    _user = FirebaseAuth.instance.currentUser; // 初期化時にログインユーザー情報を取得
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      setState(() {
+        _user = user;
+      });
+    });
   }
 
   Future<List<dynamic>> fetchRankingVideos() async {
@@ -108,7 +112,7 @@ class _LankingState extends State<LankingPage> {
             UserAccountsDrawerHeader(
               accountName: _user != null ? Text(_user!.displayName ?? '') : null,
               accountEmail: _user != null ? Text(_user!.email ?? '') : null,
-              currentAccountPicture: _user != null? CircleAvatar(
+              currentAccountPicture: _user != null ? CircleAvatar(
                 backgroundImage: NetworkImage(_user!.photoURL ?? ''),
               ) : null,
             ),

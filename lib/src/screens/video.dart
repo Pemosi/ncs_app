@@ -19,7 +19,7 @@ class VideoPage extends StatefulWidget {
   final String thumbnailUrl;
   final String playlistName;
 
-  const VideoPage({required this.videoId,Key? key,required this.forward,required this.backVideoId,required this.previousVideoId,required this.nextVideoId,required this.videos,required this.title,required this.thumbnailUrl, required this.playlistName,}) : super(key: key);
+  const VideoPage({required this.videoId,super.key,required this.forward,required this.backVideoId,required this.previousVideoId,required this.nextVideoId,required this.videos,required this.title,required this.thumbnailUrl, required this.playlistName,});
 
   @override
   // ignore: library_private_types_in_public_api

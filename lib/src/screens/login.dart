@@ -11,7 +11,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 @RoutePage()
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   final FocusNode _passwordNameFocusNode = FocusNode();
   var _errorMessage = "";
 
-   Future<UserCredential> signInWithGoogle() async {
+   Future<UserCredential?> signInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
     final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
@@ -42,8 +42,7 @@ class _LoginPageState extends State<LoginPage> {
       return await FirebaseAuth.instance.signInWithCredential(credential);
     } else {
       print("Googleサインインできませんでした。");
-      // エラー処理またはメッセージの表示
-      throw Exception("Googleサインインできませんでした。");
+      return null;
     }
   }
 
@@ -62,7 +61,6 @@ class _LoginPageState extends State<LoginPage> {
             TextField(
               controller: _emailTextController,
               decoration: const InputDecoration(
-                filled: true,
                 labelText: 'メールアドレス',
               ),
               focusNode: _userNamefocusNode,
@@ -71,7 +69,6 @@ class _LoginPageState extends State<LoginPage> {
             TextField(
               controller: _passwordNameTextController,
               decoration: const InputDecoration(
-                filled: true,
                 labelText: 'パスワード',
               ),
               focusNode: _passwordNameFocusNode,
@@ -103,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                       );
 
                       // ログインに成功した場合、HomeRouteに遷移
-                      // ignore: use_build_context_synchronously
+                      // ignore: use_build_context_synchronously, deprecated_member_use
                       AutoRouter.of(context).pop();
                       print('ログインできてる');
                     } catch (e) {
@@ -127,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                       );
 
                       // ユーザー登録に成功した場合、HomeRouteに遷移（または適切なルートに遷移）
-                      // ignore: use_build_context_synchronously
+                      // ignore: use_build_context_synchronously, deprecated_member_use
                       AutoRouter.of(context).pop();
                       print('ユーザー登録できてる');
                     } catch (e) {

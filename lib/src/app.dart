@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ncs_app/app_router.dart';
 
 class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
+  MyApp({super.key});
 
   final _appRouter = AppRouter();
 

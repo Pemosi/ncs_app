@@ -7,7 +7,7 @@ import 'dart:convert';
 
 @RoutePage()
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -21,13 +21,18 @@ class HomeRouterPage extends AutoRouter {
 class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late Future<List<dynamic>> recommendedVideosFuture;
-  late User? _user; // ログインユーザー情報
+  User? _user; // ログインユーザー情報
 
   @override
   void initState() {
     super.initState();
     recommendedVideosFuture = fetchRecommendedVideos();
-    _user = FirebaseAuth.instance.currentUser; // 初期化時にログインユーザー情報を取得
+    // ログイン状態の変更を監視し、ログイン状態が変更されたらsetState()を呼び出してUIを更新する
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      setState(() {
+        _user = user;
+      });
+    });
   }
 
   Future<List<dynamic>> fetchRecommendedVideos() async {
@@ -47,6 +52,7 @@ class _HomePageState extends State<HomePage> {
 
   void _handleLoginLogout() async {
     if (_user == null) {
+      Navigator.pop(context);
       // ログインしていない場合はログインページに遷移
       await AutoRouter.of(context).push(const LoginRoute());
     } else {
@@ -110,7 +116,7 @@ class _HomePageState extends State<HomePage> {
             UserAccountsDrawerHeader(
               accountName: _user != null ? Text(_user!.displayName ?? '') : null,
               accountEmail: _user != null ? Text(_user!.email ?? '') : null,
-              currentAccountPicture: _user != null? CircleAvatar(
+              currentAccountPicture: _user != null ? CircleAvatar(
                 backgroundImage: NetworkImage(_user!.photoURL ?? ''),
               ) : null,
             ),

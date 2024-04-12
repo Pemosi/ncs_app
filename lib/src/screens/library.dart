@@ -8,7 +8,7 @@ import 'package:ncs_app/src/screens/login.dart';
 
 @RoutePage()
 class LibraryPage extends StatefulWidget {
-  const LibraryPage({Key? key}) : super(key: key);
+  const LibraryPage({super.key});
 
   @override
   // ignore: library_private_types_in_public_api

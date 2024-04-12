@@ -4,7 +4,7 @@ import 'package:ncs_app/app_router.dart';
 
 @RoutePage()
 class RootPage extends StatelessWidget {
-  const RootPage({Key? key}) : super(key: key);
+  const RootPage({super.key});
 
   @override
   Widget build(BuildContext context) {

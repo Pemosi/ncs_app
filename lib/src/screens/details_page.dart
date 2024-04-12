@@ -8,7 +8,7 @@ class DetailsPage extends StatelessWidget {
   final String playlistName;
   final String playlistId;
 
-  const DetailsPage({Key? key, required this.playlistName, required this.playlistId}) : super(key: key);
+  const DetailsPage({super.key, required this.playlistName, required this.playlistId});
 
   @override
   Widget build(BuildContext context) {
