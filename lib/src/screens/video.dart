@@ -2,8 +2,9 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-// import 'package:ncs_app/src/screens/home.dart';
-// import 'package:ncs_app/app_router.dart';
+import 'package:ncs_app/src/screens/bacground/audio_handler.dart';
+import 'package:ncs_app/src/screens/bacground/background_audio_screen_state.dart';
+import 'package:provider/provider.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:volume_control/volume_control.dart';
 
@@ -27,43 +28,43 @@ class VideoPage extends StatefulWidget {
 }
 
 class _VideoPageState extends State<VideoPage> {
-  late YoutubePlayerController _controller;//変数に代入
-  late YoutubeMetaData _videoMetaData; //変数に代入
-  late String nowVideoId;//変数に代入　初期値のvideoidを入れるために作った
-  late String next;//変数に代入 初期値のvideoidを入れるために作った
-  late String previous;//変数に代入　初期値のvideoidを入れるために作った
-  bool playVideo = true; //trueにすることによって再生ボタンのままになる⏸️
-  bool isMuted = false; //これもそうtrueにするとミュートマークになる🔇
-  bool isRepeating = false; //これもそうw trueにするとリピートマークが最初から色がついている
+  late YoutubePlayerController _controller;
+  late YoutubeMetaData _videoMetaData;
+  late String nowVideoId;
+  late String next;
+  late String previous;
+  bool playVideo = true;
+  bool isMuted = false;
+  bool isRepeating = false;
   double _val = 0.0;
   Timer? timer;
+  late AudioServiceHandler audioHandler;
 
   @override
-  void initState() { // 必ず最初の一回は呼ばれる
+  void initState() {
     super.initState();
     initVolumeState();
     setState(() {
-      nowVideoId = widget.videoId; // 最初に選択したvideoidをnowVideoId変数に入れている
-      next = widget.nextVideoId; // 初期値として次の動画に行くための値を入れているchangeVideoIdメソッドから次の動画に行ったタイミングで2個次の動画があったら取ってきている
-      previous = widget.previousVideoId; // これも同じ
-      _videoMetaData = const YoutubeMetaData(); // これは現在再生中のvideoidを表示したりこの動画のチャンネル名やタイトルなどを表示できるウィジェットを_videoMetaDataに格納している
-      setYouTube(); //これは必ず初期化するんだなという考え方でいい
+      nowVideoId = widget.videoId;
+      next = widget.nextVideoId;
+      previous = widget.previousVideoId;
+      _videoMetaData = const YoutubeMetaData();
+      setYouTube();
+      audioHandler = AudioServiceHandler();
     });
   }
 
   Future<void> initVolumeState() async {
     if (!mounted) return;
-
-    // 現在の音量を読み取る
     _val = await VolumeControl.volume;
     setState(() {});
   }
 
-  void setYouTube() { // YouTubeの動画をコントロール(設定)するためのメソッド
-    setState(() { // 画面の更新などをする
+  void setYouTube() {
+    setState(() {
       _controller = YoutubePlayerController(
-        initialVideoId: nowVideoId, // YoutubePlayerControllerを使ったら必ず必要な項目。初期値として最初にタップした動画のvideoIdが渡される
-        flags: const YoutubePlayerFlags( // 動画の画質とか制御とかの設定
+        initialVideoId: nowVideoId,
+        flags: const YoutubePlayerFlags(
           autoPlay: true,
           hideControls: false,
           controlsVisibleAtStart: true,
@@ -72,67 +73,71 @@ class _VideoPageState extends State<VideoPage> {
           forceHD: true,
         ),
       );
-      _controller.addListener(listener); // 動画の再生状態が変更されたり、再生位置が変更されたりするたびに呼び出されるメソッド
+      _controller.addListener(listener);
     });
   }
 
   void onRepeatIconPressed() {
-    setState(() { // 画面の更新などをする
-      isMuted = !isMuted; // デフォルトはfalseなのでミュートマークにはなっていないから!マークで反転させてる(trueにしている)
-      isMuted ? _controller.mute() : _controller.unMute(); // ここでfalseだったらとtrueだったらの条件を指定している
+    setState(() {
+      isMuted = !isMuted;
+      isMuted ? _controller.mute() : _controller.unMute();
     });
   }
 
   void onPressedIconVideo() {
-    setState(() { // 画面の更新などをする
-      playVideo ? _controller.pause() : _controller.play(); // ここでfalseだったらとtrueだったらの条件を指定している
-      playVideo = !playVideo; // デフォルトはfalseなので⏸️マークになっているので!マークで反転させてる(trueにしている)
+    setState(() {
+      playVideo ? _controller.pause() : _controller.play();
+      playVideo = !playVideo;
     });
   }
 
   void toggleRepeat() {
-    setState(() { // 画面の更新などをする
-      isRepeating = !isRepeating; // デフォルトはfalseなので🔁マークが光っていない状態になっているので!マークで反転させてる(trueにしている)
+    setState(() {
+      isRepeating = !isRepeating;
     });
   }
 
   void listener() {
-    if (_controller.value.isReady) { // もしYouTubeの動画再生の準備ができたら以下の処理を行なっている
-      setState(() { // 画面の更新などをする
-        _videoMetaData = _controller.metadata; // 動画の準備ができたらタイトルやチャンネル名やvideoIdなどを表示する
+    if (_controller.value.isReady) {
+      setState(() {
+        _videoMetaData = _controller.metadata;
       });
     }
   }
 
   void changeVideoId() {
-    setState(() { // 画面の更新などをする
-      int currentIndex = widget.videos.indexWhere((videos) => videos['id']['videoId'] == nowVideoId); //　このコードは今再生されている動画のindexを取得している
-      if (currentIndex >= 0 && currentIndex < widget.videos.length - 1) { // 今再生されている動画のindexが0以上(0も含める)だったらなのと最後の動画のindexより小さかった場合は以下の処理が動く
-        nowVideoId = widget.videos[currentIndex + 1]['id']['videoId']; // currentIndex + 1 とすることによって次の動画を再生できる
-        next = currentIndex + 2 < widget.videos.length ? widget.videos[currentIndex + 2]['id']['videoId'] : ''; // 今再生されている動画の次の次の動画を取得しているただし次の次の動画がないと空の文字列になる(正直矢印を無効にする処理を消したからいらないかもw)
+    setState(() {
+      int currentIndex =
+          widget.videos.indexWhere((videos) => videos['id']['videoId'] == nowVideoId);
+      if (currentIndex >= 0 && currentIndex < widget.videos.length - 1) {
+        nowVideoId = widget.videos[currentIndex + 1]['id']['videoId'];
+        next = currentIndex + 2 < widget.videos.length
+            ? widget.videos[currentIndex + 2]['id']['videoId']
+            : '';
       }
     });
-    if (nowVideoId.isNotEmpty) { //　nowVideoIdが空でない場合以下の処理が動く
-      _controller.load(nowVideoId);//　videoIdをロードして動画を再生している
+    if (nowVideoId.isNotEmpty) {
+      _controller.load(nowVideoId);
     }
   }
 
   void backtoVideoId() {
     setState(() {
-      int currentIndex = widget.videos.indexWhere((videos) => videos['id']['videoId'] == nowVideoId);//　このコードは今再生されている動画のindexを取得している
-      if (currentIndex > 0) { //今再生されている動画のindexが0より(0は含めない)大きかったら
-        nowVideoId = widget.videos[currentIndex - 1]['id']['videoId']; // currentIndex - 1とすることで前の動画に戻る
-        previous = currentIndex - 2 >= 0 ? widget.videos[currentIndex - 2]['id']['videoId'] : ''; // 
+      int currentIndex =
+          widget.videos.indexWhere((videos) => videos['id']['videoId'] == nowVideoId);
+      if (currentIndex > 0) {
+        nowVideoId = widget.videos[currentIndex - 1]['id']['videoId'];
+        previous = currentIndex - 2 >= 0 ? widget.videos[currentIndex - 2]['id']['videoId'] : '';
       }
     });
-    if (nowVideoId.isNotEmpty) { //　nowVideoIdが空でない場合以下の処理が動く
-      _controller.load(nowVideoId); //　videoIdをロードして動画を再生している
+    if (nowVideoId.isNotEmpty) {
+      _controller.load(nowVideoId);
     }
   }
 
   @override
   void dispose() {
-    _controller.dispose(); // Youtube再生ページから離れるときにcontrollerが破棄されるようにする
+    _controller.dispose();
     super.dispose();
   }
 
@@ -168,7 +173,7 @@ class _VideoPageState extends State<VideoPage> {
                       title: Text(playlistName),
                       onTap: () {
                         addToLibrary(playlistName);
-                        Navigator.pop(context); // リストアイテムをタップしたらダイアログを閉じる
+                        Navigator.pop(context);
                       },
                     );
                   },
@@ -181,7 +186,7 @@ class _VideoPageState extends State<VideoPage> {
     );
   }
 
-  void addToLibrary(String libraryName) { // ライブラリに追加したデータたち以下
+  void addToLibrary(String libraryName) {
     final videoData = {
       'videoId': nowVideoId,
       'title': widget.title,
@@ -191,18 +196,17 @@ class _VideoPageState extends State<VideoPage> {
       'previousVideoId': widget.previousVideoId,
     };
 
-    FirebaseFirestore.instance // ファイヤーベース内にライブラリとライブラリに入れた動画を保存エラーの処理もある
+    FirebaseFirestore.instance
         .collection('libraries')
-        .doc(libraryName) // 追加とは別の意味になる
+        .doc(libraryName)
         .collection('videos')
-        .add(videoData) // 動画の情報を追加している
+        .add(videoData)
         .then((value) {
       print('動画がライブラリに追加されました');
     }).catchError((error) {
       print('動画の追加中にエラーが発生しました：$error');
     });
   }
-
 
   IconButton muteButton() {
     return IconButton(
@@ -227,7 +231,6 @@ class _VideoPageState extends State<VideoPage> {
 
   @override
   Widget build(BuildContext context) {
-
     IconButton iconButtonforward = IconButton(
       onPressed: () {
         changeVideoId();
@@ -257,39 +260,45 @@ class _VideoPageState extends State<VideoPage> {
         ),
         backgroundColor: Colors.deepPurple,
         leading: IconButton(
-          onPressed:() {
-            context.router.pop();
+          onPressed: () {
+            Navigator.pop(context);
           },
           icon: const Icon(Icons.arrow_back_ios_new),
         ),
       ),
-      body: Column(
-        children: [
-          YoutubePlayer(
-            controller: _controller,
-            showVideoProgressIndicator: false,
-            progressIndicatorColor: Colors.amber,
-            progressColors: const ProgressBarColors(
-              playedColor: Colors.amber,
-              handleColor: Colors.amberAccent,
+      body: ChangeNotifierProvider(
+        create: (_) => BackgroundAudioScreenState()..init(),
+        child: Column(
+          children: [
+            YoutubePlayer(
+              controller: _controller,
+              showVideoProgressIndicator: false,
+              progressIndicatorColor: Colors.amber,
+              progressColors: const ProgressBarColors(
+                playedColor: Colors.amber,
+                handleColor: Colors.amberAccent,
+              ),
+              onReady: () {
+                _videoMetaData = _controller.metadata;
+              },
+              onEnded: (_) {
+                if (isRepeating) {
+                  _controller.seekTo(const Duration(seconds: 0));
+                  _controller.play();
+                } else {
+                  changeVideoId();
+                }
+              },
             ),
-            onReady: () {
-              _videoMetaData = _controller.metadata;
-            },
-            onEnded: (_) {
-              if (isRepeating) {
-                _controller.seekTo(const Duration(seconds: 0));
-                _controller.play();
-              } else {
-                changeVideoId();
-              }
-            },
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              playvideoButton(),
-              const Padding(padding: EdgeInsets.all(10)),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  onPressed: () => context.read<BackgroundAudioScreenState>().play(),
+                  icon: const Icon(Icons.play_arrow),
+                  iconSize: 32.0,
+                ),
+                const Padding(padding: EdgeInsets.all(10)),
                 Text(
                   "Author: ${_videoMetaData.author}",
                   style: const TextStyle(
@@ -298,70 +307,60 @@ class _VideoPageState extends State<VideoPage> {
                   ),
                 ),
                 const Padding(padding: EdgeInsets.all(10)),
-              Text(
-                "Title: ${_videoMetaData.title}",
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Padding(padding: EdgeInsets.all(5)),
-              // Text(
-              //   "Video ID: ${_videoMetaData.videoId}",
-              //     style: const TextStyle(
-              //       fontSize: 17,
-              //       fontWeight: FontWeight.bold,
-              //     ),
-              //   ),
-              // const Padding(padding: EdgeInsets.all(10)),
-            ],
-          ),
-          Center(
-            child: Column(
-              children: [
-                const Padding(padding: EdgeInsets.all(15)),
-                const Text(
-                  "Volume:",
-                  style: TextStyle(
-                    fontSize: 16,
+                Text(
+                  "Title: ${_videoMetaData.title}",
+                  style: const TextStyle(
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Slider(
-                  value: _val,
-                  min: 0,
-                  max: 1,
-                  divisions: 100,
-                  onChanged: (val) {
-                    _val = val;
-                    setState(() {});
-                    if (timer != null) {
-                      timer?.cancel();
-                    }
-
-                    // スムーズなスライディングのためにタイマーを使用
-                    timer = Timer(const Duration(milliseconds: 200), () {
-                      VolumeControl.setVolume(val);
-                    });
-
-                    print("val: $val");
-                  },
-                ),
+                const Padding(padding: EdgeInsets.all(5)),
               ],
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              iconButtonBack,
-              muteButton(),
-              repeatButton(),
-              iconButtonforward,
-              iconButtonAdd,
-            ],
-          ),
-          const Padding(padding: EdgeInsets.all(10)),
-        ],
+            Center(
+              child: Column(
+                children: [
+                  const Padding(padding: EdgeInsets.all(15)),
+                  const Text(
+                    "Volume:",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Slider(
+                    value: _val,
+                    min: 0,
+                    max: 1,
+                    divisions: 100,
+                    onChanged: (val) {
+                      _val = val;
+                      setState(() {});
+                      if (timer != null) {
+                        timer?.cancel();
+                      }
+
+                      timer = Timer(const Duration(milliseconds: 200), () {
+                        VolumeControl.setVolume(val);
+                      });
+
+                      print("val: $val");
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                iconButtonBack,
+                iconButtonAdd,
+                iconButtonforward,
+              ],
+            ),
+            const Padding(padding: EdgeInsets.all(10)),
+          ],
+        ),
       ),
     );
   }

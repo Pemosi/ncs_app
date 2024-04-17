@@ -20,6 +20,12 @@ dependencies:
   google_sign_in: ^6.1.6
   flutter_signin_button: ^2.0.0
   miniplayer: ^1.0.1
+  just_audio: ^0.9.37
+  rxdart: ^0.27.7
+  audio_service: ^0.18.13
+  get_it: ^7.6.9
+  just_audio_background: ^0.0.1-beta.11
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
