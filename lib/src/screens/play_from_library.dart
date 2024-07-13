@@ -1,9 +1,7 @@
 // ignore_for_file: camel_case_types
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:ncs_app/src/screens/details_page.dart';
 import 'package:volume_control/volume_control.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -187,11 +185,11 @@ class _LibraryVideoPageState extends State<LibraryVideoPage> {
         backgroundColor: Colors.deepPurple,
         leading: IconButton(
           icon: const Icon(
-            Icons.library_books,
+            Icons.arrow_back_ios_new,
             color: Colors.white,
           ),
           onPressed: () {
-            Navigator.pop(context, DetailsPage(playlistName: widget.playlistName, playlistId: ''));
+            Navigator.pop(context);
           },
         ),
       ),

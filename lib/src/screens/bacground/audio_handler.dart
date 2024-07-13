@@ -1,47 +1,61 @@
+import 'dart:async';
+import 'dart:io';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter/services.dart';
 
-
-bool _isInitialized = false;
-
-Future<AudioServiceHandler?> initeAudioService() async {
-  if (!_isInitialized) {
-    _isInitialized = true;
-    return await AudioService.init(
-        builder: () => AudioServiceHandler(),
-        config: const AudioServiceConfig(
-          androidNotificationChannelId: 'com.mycompany.myapp.audio',
-          androidNotificationChannelName: 'Test Audio Service',
-          androidNotificationOngoing: true,
-          androidStopForegroundOnPause: true,
-        ));
-  } else {
-    // 既に初期化済みの場合は何もしないか、適切な処理を行う
-    // この場合、適切なエラーハンドリングやログ出力を行うのが良いでしょう
-    return null;
-  }
+Future<AudioServiceHandler> initeAudioService() async {
+  return await AudioService.init(
+      builder: () => AudioServiceHandler(),
+      config: const AudioServiceConfig(
+        androidNotificationChannelId: 'com.mycompany.myapp.audio',
+        androidNotificationChannelName: 'Test Audio Service',
+        androidNotificationOngoing: true,
+        androidStopForegroundOnPause: true,
+      ));
 }
 
 class AudioServiceHandler extends BaseAudioHandler {
-  final AudioPlayer player = AudioPlayer();
-  AudioPlayer? subPlayer1;
-  AudioPlayer? subPlayer2;
+  final AudioPlayer _player = AudioPlayer();
+  List<MediaItem> _playlist = [];
+  int _currentIndex = 0;
 
-  Future<void> initPlayer(MediaItem item) async {
+  Future<void> initPlayer(List<MediaItem> playlist) async {
     try {
+      _playlist = playlist;
+      _currentIndex = 0;
+
       _notifyAudioHandlerAboutPlaybackEvents();
-      await player.setAudioSource(AudioSource.uri(Uri.parse(item.id)));
-      mediaItem.add(item.copyWith(duration: player.duration));
+      await _setAndPlayCurrent();
     } catch (e) {
-      debugPrint('ERROR OCCURED:$e');
+      debugPrint('ERROR OCCURRED: $e');
     }
+  }
+
+  Future<void> _setAndPlayCurrent() async {
+    if (_playlist.isEmpty) return;
+    MediaItem currentItem = _playlist[_currentIndex];
+    Uri uri = await _loadAsset(currentItem.id);
+
+    await _player.setAudioSource(AudioSource.uri(uri));
+    mediaItem.add(currentItem.copyWith(duration: _player.duration));
+    _player.play();
+  }
+
+  Future<Uri> _loadAsset(String assetPath) async {
+    final data = await rootBundle.load(assetPath);
+    final directory = await getTemporaryDirectory();
+    final file = File('${directory.path}/${assetPath.split('/').last}');
+    await file.writeAsBytes(data.buffer.asUint8List());
+    return Uri.file(file.path);
   }
 
   /* --- SUBSCRIBE --- */
   void _notifyAudioHandlerAboutPlaybackEvents() {
-    player.playbackEventStream.listen((PlaybackEvent event) {
-      final playing = player.playing;
+    _player.playbackEventStream.listen((PlaybackEvent event) {
+      final playing = _player.playing;
       playbackState.add(playbackState.value.copyWith(
         controls: [
           MediaControl.skipToPrevious,
@@ -59,11 +73,11 @@ class AudioServiceHandler extends BaseAudioHandler {
           ProcessingState.buffering: AudioProcessingState.buffering,
           ProcessingState.ready: AudioProcessingState.ready,
           ProcessingState.completed: AudioProcessingState.completed,
-        }[player.processingState]!,
+        }[_player.processingState]!,
         playing: playing,
-        updatePosition: player.position,
-        bufferedPosition: player.bufferedPosition,
-        speed: player.speed,
+        updatePosition: _player.position,
+        bufferedPosition: _player.bufferedPosition,
+        speed: _player.speed,
         queueIndex: event.currentIndex,
       ));
     });
@@ -72,59 +86,36 @@ class AudioServiceHandler extends BaseAudioHandler {
   /* --- Audio Control --- */
   @override
   Future<void> play() async {
-    player.play();
-    subPlayer1?.play();
-    subPlayer2?.play();
+    _player.play();
   }
 
   @override
   Future<void> pause() async {
-    player.pause();
-    subPlayer1?.pause();
-    subPlayer2?.pause();
+    _player.pause();
   }
 
   @override
-  Future<void> seek(Duration position) => player.seek(position);
+  Future<void> seek(Duration position) => _player.seek(position);
 
   @override
-  Future<void> stop() {
-    player.stop();
+  Future<void> stop() async {
+    await _player.stop();
     return super.stop();
   }
 
-  void dispose() {
-    subPlayer1?.dispose();
-    subPlayer2?.dispose();
+  @override
+  Future<void> skipToNext() async {
+    if (_currentIndex < _playlist.length - 1) {
+      _currentIndex++;
+      await _setAndPlayCurrent();
+    }
   }
 
-/* --- SUB AUDIO CONTROL --- */
-
-  Future<void> setAudioSource1(MediaItem item) async {
-    subPlayer1 = AudioPlayer()
-      ..setAudioSource(AudioSource.uri(Uri.parse(item.id)))
-      ..setLoopMode(LoopMode.one)
-      ..play();
-  }
-
-  Future<void> setAudioSource2(MediaItem item) async {
-    subPlayer2 = AudioPlayer()
-      ..setAudioSource(AudioSource.uri(Uri.parse(item.id)))
-      ..setLoopMode(LoopMode.one)
-      ..play();
-  }
-
-  void setVolume1(double value) {
-    subPlayer1?.setVolume(value);
-  }
-
-  void setVolume2(double value) {
-    subPlayer2?.setVolume(value);
-  }
-
-  /* --- Volume Control --- */
-
-  void setVolume(double volume) {
-    player.setVolume(volume);
+  @override
+  Future<void> skipToPrevious() async {
+    if (_currentIndex > 0) {
+      _currentIndex--;
+      await _setAndPlayCurrent();
+    }
   }
 }

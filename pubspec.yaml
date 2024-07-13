@@ -26,6 +26,7 @@ dependencies:
   get_it: ^7.6.9
   just_audio_background: ^0.0.1-beta.11
   provider: ^6.1.2
+  audio_video_progress_bar: ^2.0.2
 
 dev_dependencies:
   flutter_test:
@@ -38,7 +39,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-flutter_icons:       
+flutter_icons:
   android: true
   ios: true
   image_path: "assets/stera.png"

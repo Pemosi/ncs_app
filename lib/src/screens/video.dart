@@ -2,9 +2,6 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:ncs_app/src/screens/bacground/audio_handler.dart';
-import 'package:ncs_app/src/screens/bacground/background_audio_screen_state.dart';
-import 'package:provider/provider.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:volume_control/volume_control.dart';
 
@@ -20,7 +17,17 @@ class VideoPage extends StatefulWidget {
   final String thumbnailUrl;
   final String playlistName;
 
-  const VideoPage({required this.videoId,super.key,required this.forward,required this.backVideoId,required this.previousVideoId,required this.nextVideoId,required this.videos,required this.title,required this.thumbnailUrl, required this.playlistName,});
+  const VideoPage({super.key, 
+    required this.videoId,
+    required this.forward,
+    required this.backVideoId,
+    required this.previousVideoId,
+    required this.nextVideoId,
+    required this.videos,
+    required this.title,
+    required this.thumbnailUrl,
+    required this.playlistName,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -36,9 +43,8 @@ class _VideoPageState extends State<VideoPage> {
   bool playVideo = true;
   bool isMuted = false;
   bool isRepeating = false;
-  double _val = 0.0;
+  double _val = 0.5;
   Timer? timer;
-  late AudioServiceHandler audioHandler;
 
   @override
   void initState() {
@@ -50,7 +56,6 @@ class _VideoPageState extends State<VideoPage> {
       previous = widget.previousVideoId;
       _videoMetaData = const YoutubeMetaData();
       setYouTube();
-      audioHandler = AudioServiceHandler();
     });
   }
 
@@ -215,12 +220,12 @@ class _VideoPageState extends State<VideoPage> {
     );
   }
 
-  IconButton playvideoButton() {
-    return IconButton(
-      icon: playVideo ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
-      onPressed: onPressedIconVideo,
-    );
-  }
+  // IconButton playvideoButton() {
+  //   return IconButton(
+  //     icon: playVideo ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
+  //     onPressed: onPressedIconVideo,
+  //   );
+  // }
 
   IconButton repeatButton() {
     return IconButton(
@@ -260,45 +265,38 @@ class _VideoPageState extends State<VideoPage> {
         ),
         backgroundColor: Colors.deepPurple,
         leading: IconButton(
-          onPressed: () {
+          onPressed:() {
             Navigator.pop(context);
           },
           icon: const Icon(Icons.arrow_back_ios_new),
         ),
       ),
-      body: ChangeNotifierProvider(
-        create: (_) => BackgroundAudioScreenState()..init(),
-        child: Column(
-          children: [
-            YoutubePlayer(
-              controller: _controller,
-              showVideoProgressIndicator: false,
-              progressIndicatorColor: Colors.amber,
-              progressColors: const ProgressBarColors(
-                playedColor: Colors.amber,
-                handleColor: Colors.amberAccent,
-              ),
-              onReady: () {
-                _videoMetaData = _controller.metadata;
-              },
-              onEnded: (_) {
-                if (isRepeating) {
-                  _controller.seekTo(const Duration(seconds: 0));
-                  _controller.play();
-                } else {
-                  changeVideoId();
-                }
-              },
+      body: Column(
+        children: [
+          YoutubePlayer(
+            controller: _controller,
+            showVideoProgressIndicator: false,
+            progressIndicatorColor: Colors.amber,
+            progressColors: const ProgressBarColors(
+              playedColor: Colors.amber,
+              handleColor: Colors.amberAccent,
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  onPressed: () => context.read<BackgroundAudioScreenState>().play(),
-                  icon: const Icon(Icons.play_arrow),
-                  iconSize: 32.0,
-                ),
-                const Padding(padding: EdgeInsets.all(10)),
+            onReady: () {
+              _videoMetaData = _controller.metadata;
+            },
+            onEnded: (_) {
+              if (isRepeating) {
+                _controller.seekTo(const Duration(seconds: 0));
+                _controller.play();
+              } else {
+                changeVideoId();
+              }
+            },
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Padding(padding: EdgeInsets.all(10)),
                 Text(
                   "Author: ${_videoMetaData.author}",
                   style: const TextStyle(
@@ -307,61 +305,70 @@ class _VideoPageState extends State<VideoPage> {
                   ),
                 ),
                 const Padding(padding: EdgeInsets.all(10)),
-                Text(
-                  "Title: ${_videoMetaData.title}",
+              Text(
+                "Title: ${_videoMetaData.title}",
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Padding(padding: EdgeInsets.all(5)),
+              Text(
+                "Video ID: ${_videoMetaData.videoId}",
                   style: const TextStyle(
-                    fontSize: 20,
+                    fontSize: 17,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Padding(padding: EdgeInsets.all(5)),
-              ],
-            ),
-            Center(
-              child: Column(
-                children: [
-                  const Padding(padding: EdgeInsets.all(15)),
-                  const Text(
-                    "Volume:",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Slider(
-                    value: _val,
-                    min: 0,
-                    max: 1,
-                    divisions: 100,
-                    onChanged: (val) {
-                      _val = val;
-                      setState(() {});
-                      if (timer != null) {
-                        timer?.cancel();
-                      }
-
-                      timer = Timer(const Duration(milliseconds: 200), () {
-                        VolumeControl.setVolume(val);
-                      });
-
-                      print("val: $val");
-                    },
-                  ),
-                ],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              const Padding(padding: EdgeInsets.all(10)),
+            ],
+          ),
+          Center(
+            child: Column(
               children: [
-                iconButtonBack,
-                iconButtonAdd,
-                iconButtonforward,
+                const Padding(padding: EdgeInsets.all(15)),
+                const Text(
+                  "Volume:",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Slider(
+                  value: _val,
+                  min: 0,
+                  max: 1,
+                  divisions: 100,
+                  onChanged: (val) {
+                    _val = val;
+                    setState(() {});
+                    if (timer != null) {
+                      timer?.cancel();
+                    }
+
+                    timer = Timer(const Duration(milliseconds: 200), () {
+                      VolumeControl.setVolume(val);
+                    });
+
+                    print("val: $val");
+                  },
+                ),
               ],
             ),
-            const Padding(padding: EdgeInsets.all(10)),
-          ],
-        ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              iconButtonBack,
+              muteButton(),
+              repeatButton(),
+              iconButtonforward,
+              iconButtonAdd,
+            ],
+          ),
+          const Padding(padding: EdgeInsets.all(10)),
+        ],
       ),
     );
   }
-}
+} 

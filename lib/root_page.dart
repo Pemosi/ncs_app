@@ -9,12 +9,12 @@ class RootPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AutoTabsRouter(
-      routes: [
+      routes: const [
         // ここに各タブ画面のルートを追加する
-        const HomeRouterRoute(),
-        const LankingRoute(),
-        const SearchRoute(),
-        LibraryRoute(videoId: '', videos: const [], title: '', thumbnailUrl: '', forward: '', backVideoId: '', previousVideoId: '', nextVideoId: ''),
+        HomeRouterRoute(),
+        LankingRoute(),
+        SearchRoute(),
+        LibraryRoute(),
       ],
       builder: (context, child) {
         // タブが切り替わると発火します

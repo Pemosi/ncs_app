@@ -51,12 +51,9 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     LibraryRoute.name: (routeData) {
-      final args = routeData.argsAs<LibraryRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: LibraryPage(
-          key: args.key,
-        ),
+        child: const LibraryPage(),
       );
     },
     LibraryRouterRoute.name: (routeData) {
@@ -94,8 +91,8 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: VideoPage(
-          videoId: args.videoId,
           key: args.key,
+          videoId: args.videoId,
           forward: args.forward,
           backVideoId: args.backVideoId,
           previousVideoId: args.previousVideoId,
@@ -211,75 +208,16 @@ class LankingRouterRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [LibraryPage]
-class LibraryRoute extends PageRouteInfo<LibraryRouteArgs> {
-  LibraryRoute({
-    Key? key,
-    required String videoId,
-    required List<dynamic> videos,
-    required String title,
-    required String thumbnailUrl,
-    required String forward,
-    required String backVideoId,
-    required String previousVideoId,
-    required String nextVideoId,
-    List<PageRouteInfo>? children,
-  }) : super(
+class LibraryRoute extends PageRouteInfo<void> {
+  const LibraryRoute({List<PageRouteInfo>? children})
+      : super(
           LibraryRoute.name,
-          args: LibraryRouteArgs(
-            key: key,
-            videoId: videoId,
-            videos: videos,
-            title: title,
-            thumbnailUrl: thumbnailUrl,
-            forward: forward,
-            backVideoId: backVideoId,
-            previousVideoId: previousVideoId,
-            nextVideoId: nextVideoId,
-          ),
           initialChildren: children,
         );
 
   static const String name = 'LibraryRoute';
 
-  static const PageInfo<LibraryRouteArgs> page =
-      PageInfo<LibraryRouteArgs>(name);
-}
-
-class LibraryRouteArgs {
-  const LibraryRouteArgs({
-    this.key,
-    required this.videoId,
-    required this.videos,
-    required this.title,
-    required this.thumbnailUrl,
-    required this.forward,
-    required this.backVideoId,
-    required this.previousVideoId,
-    required this.nextVideoId,
-  });
-
-  final Key? key;
-
-  final String videoId;
-
-  final List<dynamic> videos;
-
-  final String title;
-
-  final String thumbnailUrl;
-
-  final String forward;
-
-  final String backVideoId;
-
-  final String previousVideoId;
-
-  final String nextVideoId;
-
-  @override
-  String toString() {
-    return 'LibraryRouteArgs{key: $key, videoId: $videoId, videos: $videos, title: $title, thumbnailUrl: $thumbnailUrl, forward: $forward, backVideoId: $backVideoId, previousVideoId: $previousVideoId, nextVideoId: $nextVideoId}';
-  }
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for
@@ -356,8 +294,8 @@ class SearchRouterRoute extends PageRouteInfo<void> {
 /// [VideoPage]
 class VideoRoute extends PageRouteInfo<VideoRouteArgs> {
   VideoRoute({
-    required String videoId,
     Key? key,
+    required String videoId,
     required String forward,
     required String backVideoId,
     required String previousVideoId,
@@ -370,8 +308,8 @@ class VideoRoute extends PageRouteInfo<VideoRouteArgs> {
   }) : super(
           VideoRoute.name,
           args: VideoRouteArgs(
-            videoId: videoId,
             key: key,
+            videoId: videoId,
             forward: forward,
             backVideoId: backVideoId,
             previousVideoId: previousVideoId,
@@ -391,8 +329,8 @@ class VideoRoute extends PageRouteInfo<VideoRouteArgs> {
 
 class VideoRouteArgs {
   const VideoRouteArgs({
-    required this.videoId,
     this.key,
+    required this.videoId,
     required this.forward,
     required this.backVideoId,
     required this.previousVideoId,
@@ -403,9 +341,9 @@ class VideoRouteArgs {
     required this.playlistName,
   });
 
-  final String videoId;
-
   final Key? key;
+
+  final String videoId;
 
   final String forward;
 
@@ -425,6 +363,6 @@ class VideoRouteArgs {
 
   @override
   String toString() {
-    return 'VideoRouteArgs{videoId: $videoId, key: $key, forward: $forward, backVideoId: $backVideoId, previousVideoId: $previousVideoId, nextVideoId: $nextVideoId, videos: $videos, title: $title, thumbnailUrl: $thumbnailUrl, playlistName: $playlistName}';
+    return 'VideoRouteArgs{key: $key, videoId: $videoId, forward: $forward, backVideoId: $backVideoId, previousVideoId: $previousVideoId, nextVideoId: $nextVideoId, videos: $videos, title: $title, thumbnailUrl: $thumbnailUrl, playlistName: $playlistName}';
   }
 }
