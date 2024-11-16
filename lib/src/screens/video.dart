@@ -263,7 +263,7 @@ class _VideoPageState extends State<VideoPage> {
           'Play Video',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.black87,
         leading: IconButton(
           onPressed:() {
             Navigator.pop(context);

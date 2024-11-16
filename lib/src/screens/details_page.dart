@@ -14,7 +14,7 @@ class DetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.black87,
         title: Text(
           playlistName,
           style: const TextStyle(color: Colors.white),

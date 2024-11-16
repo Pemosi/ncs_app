@@ -43,7 +43,7 @@ class _SearchPageState extends State<SearchPage> {
           '動画を検索',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.black87,
       ),
       body: Column(
         children: [

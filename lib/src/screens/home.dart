@@ -106,7 +106,7 @@ class _HomePageState extends State<HomePage> {
           '最新のおすすめ',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.black87,
         leading: IconButton(
           icon: const Icon(
             Icons.account_circle,
@@ -151,8 +151,8 @@ class _HomePageState extends State<HomePage> {
                           forward: forward,
                           nextVideoId: nextVideoId,
                           previousVideoId: previousVideoId,
-                          videos: videos, 
-                          thumbnailUrl: thumbnailUrl, 
+                          videos: videos,
+                          thumbnailUrl: thumbnailUrl,
                           title: title,
                           playlistName: '',
                         ),

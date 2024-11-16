@@ -21,41 +21,6 @@ class BackgroundAudioScreenState extends ChangeNotifier {
   List<MediaItem> get playlist => _playlist;
 
   static final List<MediaItem> _playlist = [
-    MediaItem(
-      id: 'assets/bgm/西表島.mp3',
-      album: "にゃんこBGM",
-      title: "にゃんこ西表島",
-      artist: "PONOS",
-      artUri: Uri.parse('https://games.app-liv.jp/images/articles/2016/06/gd138472_-13.jpg'),
-    ),
-    MediaItem(
-      id: 'assets/bgm/アポロ決戦.mp3',
-      album: "にゃんこBGM",
-      title: "アポロ決戦",
-      artist: "PONOS",
-      artUri: Uri.parse('https://games.app-liv.jp/images/articles/2016/09/gd183522_-13.jpg'),
-    ),
-    MediaItem(
-      id: 'assets/bgm/ビックバン組曲.mp3',
-      album: "にゃんこBGM",
-      title: "ビッグバン",
-      artist: "PONOS",
-      artUri: Uri.parse('https://image02.seesaawiki.jp/b/i/battlecatswiki/F5cvA0LXky.PNG'),
-    ),
-    MediaItem(
-      id: 'assets/bgm/スターフィリバスター.mp3',
-      album: "にゃんこBGM",
-      title: "宇宙の危機！スターフィリバスター",
-      artist: "PONOS",
-      artUri: Uri.parse('https://image02.seesaawiki.jp/b/i/battlecatswiki/ef44967993c6f9df.png'),
-    ),
-    MediaItem(
-      id: 'assets/bgm/消滅都市.mp3',
-      album: "にゃんこBGM",
-      title: "消滅都市 X にゃんこ大戦争コラボ",
-      artist: "PONOS",
-      artUri: Uri.parse('https://i.ytimg.com/vi/JYirsfGB19Q/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLD-52sOYg1-atvrrLNnV0kjvZJlnA'),
-    ),
   ];
 
   void init() {

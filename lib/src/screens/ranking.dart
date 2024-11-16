@@ -143,7 +143,7 @@ class _LankingState extends State<LankingPage> {
           'ランキング👑',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.black87,
         leading: IconButton(
           icon: const Icon(
             Icons.account_circle,

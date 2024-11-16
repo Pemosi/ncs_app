@@ -150,7 +150,7 @@ class _LibraryPageState extends State<LibraryPage> {
           'ライブラリ',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.black87,
       ),
       body: StreamBuilder<User?>(
         stream: _auth.authStateChanges(),
@@ -247,14 +247,15 @@ class _LibraryPageState extends State<LibraryPage> {
               context: context,
               builder: (context) {
                 return AlertDialog(
-                  title: const Text('ログインが必要です'),
-                  content: const Text('プレイリストを作成するにはログインが必要です。'),
+                  backgroundColor: Colors.black87,
+                  title: const Text('ログインが必要です', style: TextStyle(color: Colors.white),),
+                  content: const Text('プレイリストを作成するにはログインが必要です。', style: TextStyle(color: Colors.white),),
                   actions: [
                     TextButton(
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
-                      child: const Text('OK'),
+                      child: const Text('OK', style: TextStyle(color: Colors.white),),
                     ),
                   ],
                 );
@@ -296,8 +297,9 @@ class _LibraryPageState extends State<LibraryPage> {
             );
           }
         },
-        icon: const Icon(Icons.add),
-        label: const Text('プレイリストを作成'),
+        icon: const Icon(Icons.add, color: Colors.white,),
+        label: const Text("プレイリストを作成", style: TextStyle(color: Colors.white),),
+        backgroundColor: Colors.black,
       ),
     );
   }

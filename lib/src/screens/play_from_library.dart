@@ -182,7 +182,7 @@ class _LibraryVideoPageState extends State<LibraryVideoPage> {
           'Play from Library',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.black87,
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios_new,
